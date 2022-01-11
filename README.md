@@ -12,7 +12,7 @@ function PushDataStr(datastr)
 Where ```GetDataStr()``` returns a string of serialized data ('```DataStr```') which could for example be the result of parsing a file,
 and ```PushDataStr(datastr)``` gets a string of serialized data which could be used for example in a calculation.
 
-These can be used in C++ via the [LuaCppAPI](LuaCppAPI/LuaCppAPI.h) interface. 
+These functions can be used in C++ via the [LuaCppAPI](LuaCppAPI/LuaCppAPI.h) interface. 
 
 The Lua table-to-string serialization logic is <b>invariant</b> (could be [JSON](https://www.json.org/json-en.html), [Protobuf](https://developers.google.com/protocol-buffers/docs/encoding), [base64](https://www.base64decode.org/), etc.) as long as it implements the following:
 ```lua
