@@ -62,3 +62,21 @@ For the purposes of this demo, serialization is implemented using JSON - See [Se
    ./LuaCppDemo
    ```
    
+## Example Output
+```
+/home/cyber/CLionProjects/LuaCppDemo/cmake-build-debug/LuaCppDemo
+[main.cpp] Running demo_get_then_push('../lua/a.lua', '../lua/b.lua')... 
+[main.cpp] Calling LuaCppAPI::GetDataStr('../lua/a.lua')...
+[a.lua] GetDataStr() --> {"author":"a","message":"how you doin'?"}
+[main.cpp] DataStr = '{"author":"a","message":"how you doin'?"}'
+[main.cpp] Calling LuaCppAPI::PushDataStr('../lua/b.lua', {"author":"a","message":"how you doin'?"})...
+[b.lua]: PushDataStr({ ["message"] = 'how you doin'?',["author"] = 'a',} )
+[main.cpp] Done!
+[main.cpp] Running demo_get_then_push('../lua/b.lua', '../lua/a.lua')... 
+[main.cpp] Calling LuaCppAPI::GetDataStr('../lua/b.lua')...
+[b.lua] GetDataStr() --> {"author":"b","message":"hello there!"}
+[main.cpp] DataStr = '{"author":"b","message":"hello there!"}'
+[main.cpp] Calling LuaCppAPI::PushDataStr('../lua/a.lua', {"author":"b","message":"hello there!"})...
+[a.lua]: PushDataStr({ ["author"] = 'b',["message"] = 'hello there!',} )
+[main.cpp] Done!
+```
