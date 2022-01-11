@@ -1,5 +1,5 @@
 ## Overview
-A minimal demo of moving serialized data between Lua scripts through C++.
+A minimal demo of moving serialized data between two Lua scripts through C++.
 
 In this demo, two lua scripts named ```a.lua``` and ```b.lua```, both expose the following API functions:
 ```lua
