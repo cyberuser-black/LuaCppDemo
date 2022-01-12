@@ -20,11 +20,26 @@ class LuaCppAPI {
 public:
     typedef std::string LuaScriptPath;
     typedef std::string DataStr;
-    static bool GetDataStr(const LuaScriptPath &script_path, DataStr* out_datastr);
-    static bool PushDataStr(const LuaScriptPath &script_path, const DataStr &datastr);
 
+    // Generate an API for the given Lua script path.
+    LuaCppAPI(const LuaScriptPath &script_path);
+
+    ~LuaCppAPI() = default;
+
+    // Call Lua's GetDataStr function, set out_datastr to the returned value.
+    bool GetDataStr(DataStr *out_datastr);
+
+    // Push the given datastr to Lua's PushDataStr function.
+    bool PushDataStr(const DataStr &datastr);
+
+    const LuaScriptPath &_script_path;
+    const char *_script_path_cstr;
 private:
+    // Check the if Lua returned OK or print the error otherwise.
     static bool CheckLua(lua_State *L, int r);
+
+    bool _is_ready;
+    lua_State *_L; // The Lua virtual machine to API with
 };
 
 

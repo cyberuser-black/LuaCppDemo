@@ -16,66 +16,72 @@ bool LuaCppAPI::CheckLua(lua_State *L, int r) {
     return true;
 }
 
-bool LuaCppAPI::GetDataStr(const LuaCppAPI::LuaScriptPath &script_path,
-                           DataStr *out_datastr) {
+LuaCppAPI::LuaCppAPI(const LuaCppAPI::LuaScriptPath &script_path) : _script_path(script_path),
+                                                                    _script_path_cstr(script_path.c_str()),
+                                                                    _is_ready(false) {
     // Create Lua State
-    lua_State *L = luaL_newstate();
+    _L = luaL_newstate();
     // Add standard libraries to Lua Virtual Machine
-    luaL_openlibs(L);
+    luaL_openlibs(_L);
 
-    // Run Lua script and call its 'GetDataStr()' function
-    if (CheckLua(L, luaL_dofile(L, script_path.c_str()))) {
-        // Push functions and arguments
-        lua_getglobal(L, "GetDataStr");
-
-        // Do the call (0 arguments, 1 result - datastr)
-        if (CheckLua(L, lua_pcall(L, 0, 1, 0))) {
-            // retrieve result
-            if (lua_isstring(L, STACK_TOP)) {
-                *out_datastr = lua_tostring(L, STACK_TOP);
-                return true;
-            } else {
-                std::cerr << "Error: Lua's stack top is not a string" << std::endl;
-                return false;
-            }
-        } else {
-        std::cerr << "Error: Failed to call '" << script_path.c_str() << ".GetDataStr()'" << std::endl;
-        return false;
-    }
+    // Run Lua script and load all of its methods
+    if (!CheckLua(_L, luaL_dofile(_L, _script_path_cstr))) {
+        std::cerr << "Error: Failed to run '" << _script_path_cstr << "'" << std::endl;
     } else {
-        std::cerr << "Error: Failed to run '" << script_path.c_str() << "'" << std::endl;
-        return false;
+        _is_ready = true;
     }
 }
 
-bool LuaCppAPI::PushDataStr(const LuaCppAPI::LuaScriptPath &script_path,
-                            const LuaCppAPI::DataStr &datastr) {
-    // Create Lua State
-    lua_State *L = luaL_newstate();
-    // Add standard libraries to Lua Virtual Machine
-    luaL_openlibs(L);
+bool LuaCppAPI::GetDataStr(DataStr *out_datastr) {
+    // Validate script is ready
+    if (!_is_ready) {
+        std::cerr << "Error: Lua script is not ready!";
+        return false;
+    }
 
-    // Run Lua script and call its 'PushDataStr(datastr)' function
-    if (CheckLua(L, luaL_dofile(L, script_path.c_str()))) {
-        // Push functions and arguments
-        lua_getglobal(L, "PushDataStr");
-        lua_pushstring(L, datastr.c_str());
+    // Push functions and arguments
+    lua_getglobal(_L, "GetDataStr");
 
-        // Do the call (1 argument - datastr, 1 result - boolean)
-        if (CheckLua(L, lua_pcall(L, 1, 1, 0))) {
-            // retrieve result
-            if (lua_isinteger(L, STACK_TOP)) {
-                return lua_tointeger(L, STACK_TOP);
-            } else {
-                std::cerr << "Error: Lua returned a non-integer value" << std::endl;
-                return false;
-            }
+    // Do the call (0 arguments, 1 result - datastr)
+    if (CheckLua(_L, lua_pcall(_L, 0, 1, 0))) {
+        // retrieve result
+        if (lua_isstring(_L, STACK_TOP)) {
+            *out_datastr = lua_tostring(_L, STACK_TOP);
+            return true;
         } else {
-            std::cerr << "Error: Failed to call '" << script_path.c_str() << ".PushDataStr(datastr)'" << std::endl;
+            std::cerr << "Error: Lua's stack top is not a string" << std::endl;
             return false;
         }
     } else {
-        std::cerr << "Error: Failed to execute '" << script_path.c_str() << "'" << std::endl;
+        std::cerr << "Error: Failed to call '" << _script_path_cstr << ".GetDataStr()'" << std::endl;
         return false;
     }
+
+}
+
+bool LuaCppAPI::PushDataStr(const LuaCppAPI::DataStr &datastr) {
+    // Validate script is ready
+    if (!_is_ready) {
+        std::cerr << "Error: Lua script is not ready!";
+        return false;
+    }
+
+    // Push functions and arguments
+    lua_getglobal(_L, "PushDataStr");
+    lua_pushstring(_L, datastr.c_str());
+
+    // Do the call (1 argument - datastr, 1 result - boolean)
+    if (CheckLua(_L, lua_pcall(_L, 1, 1, 0))) {
+        // retrieve result
+        if (lua_isinteger(_L, STACK_TOP)) {
+            return lua_tointeger(_L, STACK_TOP);
+        } else {
+            std::cerr << "Error: Lua returned a non-integer value" << std::endl;
+            return false;
+        }
+    } else {
+        std::cerr << "Error: Failed to call '" << _script_path_cstr << ".PushDataStr(datastr)'" << std::endl;
+        return false;
+    }
+
 }
