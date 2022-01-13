@@ -19,14 +19,14 @@ utils = require("utils")
 function GetDataStr()
     data = {author="b", message="hello there!"}
     datastr = serializer.TableToDataStr(data);
-    print("[b.lua] GetDataStr() --> " .. datastr)
+    print("[b.lua] GetDataStr() --> '" .. datastr .. "'")
     return datastr
 end
 
 -- API: PushDataStr
 function PushDataStr(datastr)
     data = serializer.DataStrToTable(datastr)
-    print("[b.lua]: PushDataStr(" .. utils.dump(data) ..")");
+    print("[b.lua]: PushDataStr('" .. utils.dump(data) .."')");
     return 1;
 end
 

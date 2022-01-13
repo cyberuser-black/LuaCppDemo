@@ -17,7 +17,7 @@ bool LuaCppAPI::CheckLua(lua_State *L, int r) {
 }
 
 LuaCppAPI::LuaCppAPI(const LuaCppAPI::LuaScriptPath &script_path) : _script_path(script_path),
-                                                                    _script_path_cstr(script_path.c_str()),
+                                                                    _script_path_data(script_path.data()),
                                                                     _is_ready(false) {
     // Create Lua State
     _L = luaL_newstate();
@@ -25,8 +25,8 @@ LuaCppAPI::LuaCppAPI(const LuaCppAPI::LuaScriptPath &script_path) : _script_path
     luaL_openlibs(_L);
 
     // Run Lua script and load all of its methods
-    if (!CheckLua(_L, luaL_dofile(_L, _script_path_cstr))) {
-        std::cerr << "Error: Failed to run '" << _script_path_cstr << "'" << std::endl;
+    if (!CheckLua(_L, luaL_dofile(_L, _script_path_data))) {
+        std::cerr << "Error: Failed to run '" << _script_path_data << "'" << std::endl;
     } else {
         _is_ready = true;
     }
@@ -46,14 +46,21 @@ bool LuaCppAPI::GetDataStr(DataStr *out_datastr) {
     if (CheckLua(_L, lua_pcall(_L, 0, 1, 0))) {
         // retrieve result
         if (lua_isstring(_L, STACK_TOP)) {
-            *out_datastr = lua_tostring(_L, STACK_TOP);
+            size_t len = 0;
+            const char* datastr = lua_tolstring(_L, STACK_TOP, &len);
+            out_datastr->assign(datastr, len);
+            if (len ==0){
+                out_datastr = nullptr;
+                std::cerr << "Error: Lua returned an lstring with len = 0" << std::endl;
+                return false;
+            }
             return true;
         } else {
             std::cerr << "Error: Lua's stack top is not a string" << std::endl;
             return false;
         }
     } else {
-        std::cerr << "Error: Failed to call '" << _script_path_cstr << ".GetDataStr()'" << std::endl;
+        std::cerr << "Error: Failed to call '" << _script_path_data << ".GetDataStr()'" << std::endl;
         return false;
     }
 
@@ -68,7 +75,7 @@ bool LuaCppAPI::PushDataStr(const LuaCppAPI::DataStr &datastr) {
 
     // Push functions and arguments
     lua_getglobal(_L, "PushDataStr");
-    lua_pushstring(_L, datastr.c_str());
+    lua_pushlstring(_L, datastr.data(), datastr.length());
 
     // Do the call (1 argument - datastr, 1 result - boolean)
     if (CheckLua(_L, lua_pcall(_L, 1, 1, 0))) {
@@ -80,7 +87,7 @@ bool LuaCppAPI::PushDataStr(const LuaCppAPI::DataStr &datastr) {
             return false;
         }
     } else {
-        std::cerr << "Error: Failed to call '" << _script_path_cstr << ".PushDataStr(datastr)'" << std::endl;
+        std::cerr << "Error: Failed to call '" << _script_path_data << ".PushDataStr(datastr)'" << std::endl;
         return false;
     }
 

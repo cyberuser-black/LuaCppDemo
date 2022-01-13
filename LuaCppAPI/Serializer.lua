@@ -5,12 +5,12 @@ Serializer = {}
 
 -- Serialize a Lua table to a string
 function Serializer.TableToDataStr(table)
-    return lunajson.encode(table)
+    return table["message"] --lunajson.encode(table)
 end
 
 -- Deserialize a string into a Lua table
 function Serializer.DataStrToTable(datastr)
-    return lunajson.decode(datastr)
+    return datastr --lunajson.decode(datastr)
 end
 
 return Serializer
