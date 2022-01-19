@@ -3,7 +3,7 @@
 -- PushDataStr(datastr)
 -- Has a global counter that increments on each call
 
--- Add LuaCppAPI to lua path
+-- Add the serializer to lua path
 package.path = package.path .. ";../Serialization/?.lua"
 serializer = require("ExampleSerializer")
 

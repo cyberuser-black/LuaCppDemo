@@ -1,8 +1,8 @@
 -- push.lua - A simple file implementing the lua-Cpp API:
--- GetDataStr() --> datastr
+-- GetDataStr() --> datastr  // NOT IMPLEMENTED HERE (see get.lua)
 -- PushDataStr(datastr)
 
--- Add LuaCppAPI to lua path
+-- Add the serializer to lua path
 package.path = package.path .. ";../Serialization/?.lua"
 serializer = require("ExampleSerializer")
 

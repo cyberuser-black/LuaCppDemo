@@ -1,22 +1,14 @@
--- get_increment.lua - A simple file implementing the lua-Cpp API:
--- GetDataStr() --> datastr (includes a global counter)
+-- null_terminator.lua - A simple file implementing the lua-Cpp API:
+-- GetDataStr() --> datastr (includes an embedded null terminator)
 -- PushDataStr(datastr)
--- Has a global counter that increments on each call
 
--- Add LuaCppAPI to lua path
+-- Add the serializer to lua path
 package.path = package.path .. ";../Serialization/?.lua"
 serializer = require("ExampleSerializer")
 
 -- Add Utils to lua path
 package.path = package.path .. ";../Demos/lua/?.lua"
 utils = require("utils")
-
--------------------------------------------------------------------------------
---                               Globals                                     --
--------------------------------------------------------------------------------
-
--- Global variable that will be incremented on each call
-counter = 0
 
 
 -------------------------------------------------------------------------------
@@ -25,7 +17,6 @@ counter = 0
 
 -- API: GetDataStr
 function GetDataStr()
-    counter = counter +1 -- Increment on each call to GetDataStr()
     data = {author="null_terminator", message="null terminator --> \0 <-- great success!" }
     datastr = serializer.TableToDataStr(data);
     print("[lua] [null_terminator.lua] GetDataStr() --> '" .. datastr .. "'")

@@ -7,7 +7,7 @@ into these applications.
 allow C code to interact with ```Lua```, and you should have some familiarity with it in order
 to understand what this project is really doing for you.
 
-This project is a simplified wrapper around that original [C API](https://www.lua.org/pil/24.html).
+[LuaCppAPI](LuaCppAPI) is a simplified wrapper around that original [C API](https://www.lua.org/pil/24.html).
 It exposes only the minimal ```GetDataStr()``` and ```PushDataStr(datastr)``` methods required to move serialized data between ```Lua``` and ```C++```.
 
 
@@ -17,7 +17,7 @@ It exposes only the minimal ```GetDataStr()``` and ```PushDataStr(datastr)``` me
   * ```LuaCppAPI.cpp``` - Interface implementation in ```C++```
   * ```LuaCppAPI.lua``` - Interface <b>reference</b> for ```Lua```
 * ```Serialization/``` - <b>User implemented</b> serialization logics to transform lua objects into strings and vice versa.
-  * ```ExampleSerializer.lua``` : A simple serializer that uses ```JSON```, provided as an example. 
+  * ```ExampleSerializer.lua``` - A simple serializer that uses ```JSON```, provided as an example. 
 * ```Demos/``` - A set of demos showing various usages of the interface. 
 
 ## Example
@@ -25,22 +25,11 @@ How do you get some serialized data from your ```Lua``` script into your ```C++`
 
 The following example shows the two flows of serialized data: ```Lua --> C++``` and ```C++ --> Lua```.
 
-```cpp
-// "main.cpp"
-
-int main() {
-    LuaCppAPI::DataStr datastr; // Buffer for holding serialized lua data in C++
-    LuaCppAPI("get.lua").GetDataStr(&datastr); // Lua --> C++
-    std::cout << "[main.cpp] : " << datastr << std::endl;
-    LuaCppAPI("push.lua").PushDataStr(datastr); // C++ --> Lua
-    return 0;
-}
-```
 ```Lua
 -- "get.lua"
 
 function GetDataStr()
-   data = {author="Joey", message="How you doin'?"}  -- get this data however you want
+   data = {author="Joey", message="How you doin'?"} 
    print("[get.lua] : " .. data["author"] .. " says...")
    datastr = serializer.TableToDataStr(data);
    return datastr
@@ -51,9 +40,20 @@ end
 
 function PushDataStr(datastr)
    data = serializer.DataStrToTable(datastr)
-   print("[push.lua] : " .. data["message"]); -- handle this data however you like
+   print("[push.lua] : " .. data["message"]); 
    return 1;
 end
+```
+```cpp
+// "main.cpp"
+
+int main() {
+    LuaCppAPI::DataStr datastr; // Buffer for holding serialized lua data in C++
+    LuaCppAPI("get.lua").GetDataStr(&datastr); // Lua --> C++
+    std::cout << "[main.cpp] : " << datastr << std::endl;
+    LuaCppAPI("push.lua").PushDataStr(datastr); // C++ --> Lua
+    return 0;
+}
 ```
 Output
 ```bash
@@ -143,7 +143,7 @@ which actually makes it a less viable serializing protocol. Sorry about that.
    ```shell
    sudo apt install luarocks
    ```
-3) Install Luajson
+3) Install Luajson (for the JSON serializer)
    ```shell
    sudo luarocks install lunajson
    ```
@@ -159,7 +159,7 @@ which actually makes it a less viable serializing protocol. Sorry about that.
    ```
 
 ## Demo
-This project includes a set of small [demos](Demos) showing the various use cases of the [interface](LuaCppAPI). 
+This project includes a set of small [demos](Demos) showing the various use cases of the [LuaCppAPI](LuaCppAPI) interface. 
 <br>To run these demos, go into the build directory and execute the binary you just compiled:
    ```shell
    cd build
