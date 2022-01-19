@@ -1,6 +1,6 @@
 local utils = {}
 
--- Convert Lua objects to printable strings
+-- Convert lua objects to printable strings
 -- Based on https://stackoverflow.com/questions/9168058/how-to-dump-a-table-to-console
 function utils.dump(o)
     if type(o) == 'table' then
