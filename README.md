@@ -11,7 +11,7 @@ to understand what this project is really doing for you.
 It exposes only the minimal ```GetDataStr()``` and ```PushDataStr(datastr)``` methods required to move serialized data between ```Lua``` and ```C++```.
 
 
-###Project structure
+### Project structure
 * ```LuaCppAPI/``` - A directory containing the ```C++``` and ```Lua``` implementations of the interface.
   * ```LuaCppAPI.h``` - Interface declaration for ```C++```
   * ```LuaCppAPI.cpp``` - Interface implementation in ```C++```
